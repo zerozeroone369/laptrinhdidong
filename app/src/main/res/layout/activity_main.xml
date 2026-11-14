@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="#F5F5F5">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/header_background"
+        android:gravity="center_vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/txtquanly"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/quan_ly_sach"
+            android:textColor="@android:color/white"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnThongKe"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="@string/thong_ke"
+            android:textSize="12sp"
+            android:backgroundTint="#00695C"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="6dp"/>
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="@string/thoat"
+            android:textSize="12sp"
+            android:backgroundTint="#C62828"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+
+    <!-- Nhập liệu -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingTop="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/edtmasach"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/nhap_ma_sach"
+                android:inputType="text"
+                android:importantForAutofill="no"/>
+            <EditText
+                android:id="@+id/edtgia"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/nhap_gia_tien"
+                android:inputType="number"
+                android:importantForAutofill="no"/>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/edttensach"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nhap_ten_sach"
+            android:inputType="textCapWords"
+            android:importantForAutofill="no"/>
+
+        <!-- Ô nhập link URL ảnh + Ảnh xem trước + Nút tải thử -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/edtAnhUrl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/dan_link_url_hint"
+                android:inputType="textUri"
+                android:singleLine="true"
+                android:textSize="13sp"
+                android:importantForAutofill="no"/>
+
+            <ImageView
+                android:id="@+id/imgPreview"
+                android:layout_width="34dp"
+                android:layout_height="42dp"
+                android:scaleType="centerCrop"
+                android:background="#E0E0E0"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:contentDescription="@string/app_name"
+                android:layout_marginHorizontal="6dp"/>
+
+            <Button
+                android:id="@+id/btnTaiAnh"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:text="@string/tai_anh"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <Spinner
+            android:id="@+id/spnLoai"
+            android:layout_width="match_parent"
+            android:layout_height="38dp" />
+    </LinearLayout>
+
+    <!-- 4 nút CRUD -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="6dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btninsert"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:text="@string/insert"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@null" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnupdate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:text="@string/update"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@null" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btndelete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:text="@string/delete"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@null" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnquery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:text="@string/query"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@null" />
+    </LinearLayout>
+
+    <!-- Tìm kiếm & Sắp xếp -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp">
+
+        <EditText
+            android:id="@+id/edtSearch"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:hint="@string/tim_kiem_hint"
+            android:inputType="text"
+            android:importantForAutofill="no"
+            android:textSize="14sp"
+            android:background="@android:drawable/edit_text"
+            android:paddingHorizontal="10dp"/>
+
+        <Button
+            android:id="@+id/btnSort"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="6dp"
+            android:text="@string/sap_xep"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="4dp" />
+</LinearLayout>

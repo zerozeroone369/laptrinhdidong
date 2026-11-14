@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">tieuluanck</string>
+    <string name="quan_ly_sach">QUẢN LÝ SÁCH</string>
+    <string name="ma_sach">Mã sách:</string>
+    <string name="ten_sach">Tên sách:</string>
+    <string name="gia_tien">Giá tiền:</string>
+    <string name="insert">Thêm</string>
+    <string name="update">Cập nhật</string>
+    <string name="delete">Xóa</string>
+    <string name="query">Làm mới</string>
+    <string name="nhap_ma_sach">Nhập mã sách</string>
+    <string name="nhap_ten_sach">Nhập tên sách</string>
+    <string name="nhap_gia_tien">Nhập giá tiền</string>
+    <string name="thong_ke">Thống kê</string>
+    <string name="thoat">Thoát</string>
+    <string name="tim_kiem_hint">🔍 Tìm mã hoặc tên sách...</string>
+    <string name="sap_xep">Sắp xếp</string>
+    <string name="chon_anh">Chọn ảnh</string>
+    <string name="dan_link_url_hint">Dán link URL ảnh bìa (https://…)</string>
+    <string name="tai_anh">Tải ảnh</string>
+</resources>
