@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,17 +19,15 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 
 /**
- * Activity chính Quản Lý Sách (chứa đầy đủ chức năng CRUD, Tìm kiếm, Sắp xếp, Thống kê)
+ * Activity chính Quản Lý Sách dành cho Admin (Đầy đủ quyền CRUD, Ghi nội dung sách, Sắp xếp - Không dùng Thể loại)
  */
 public class MainActivity extends AppCompatActivity {
 
     // Khai báo các thành phần giao diện
-    EditText edtma, edtten, edtgia, edtAnhUrl, edtSearch;
-    Spinner spnLoai;
+    EditText edtma, edtten, edtgia, edtAnhUrl, edtNoiDung, edtSearch;
     ImageView imgPreview;
     ListView lv;
     ArrayList<String[]> mylist = new ArrayList<>();
-    ArrayList<String> dsLoai;
     SachAdapter myadapter;
     DatabaseHelper db;
     String orderBy = "";
@@ -42,20 +38,16 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Khởi tạo Helper CSDL và ánh xá View
+        // Khởi tạo và kết nối dữ liệu và liên kết giao diện
         db = new DatabaseHelper(this);
         edtma = findViewById(R.id.edtmasach);
         edtten = findViewById(R.id.edttensach);
         edtgia = findViewById(R.id.edtgia);
         edtAnhUrl = findViewById(R.id.edtAnhUrl);
+        edtNoiDung = findViewById(R.id.edtNoiDung);
         edtSearch = findViewById(R.id.edtSearch);
-        spnLoai = findViewById(R.id.spnLoai);
         imgPreview = findViewById(R.id.imgPreview);
         lv = findViewById(R.id.lv);
-
-        // Nạp danh sách Thể loại sách vào Spinner
-        dsLoai = db.getLoaiSach();
-        spnLoai.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, dsLoai));
 
         // Khởi tạo ListView và Adapter
         myadapter = new SachAdapter(this, mylist);
@@ -72,17 +64,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Sự kiện Click chọn 1 dòng sách trong ListView -> Điền thông tin lên Form
+        // Sự kiện Click chọn 1 dòng sách trong ListView -> Điền thông tin lên Form (kèm link URL, ảnh & nội dung sách)
         lv.setOnItemClickListener((p, v, pos, id) -> {
-            String[] s = mylist.get(pos); // {masach, tensach, gia, maloai, tenloai, anhUrl}
+            String[] s = mylist.get(pos); // {masach, tensach, gia, anhUrl, noidung}
             edtma.setText(s[0]);
             edtten.setText(s[1]);
             edtgia.setText(s[2]);
-            edtAnhUrl.setText(s[5]);
-            SachAdapter.loadAnhTuUrl(s[5], imgPreview);
-            for (int i = 0; i < dsLoai.size(); i++) {
-                if (dsLoai.get(i).startsWith(s[3] + " -")) { spnLoai.setSelection(i); break; }
-            }
+            edtAnhUrl.setText(s[3]);
+            edtNoiDung.setText(s[4]);
+            SachAdapter.loadAnhTuUrl(s[3], imgPreview);
         });
 
         // Sự kiện Bấm nút THÊM sách
@@ -90,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
             String[] in = getInput();
             if (in == null) return;
             String url = edtAnhUrl.getText().toString().trim();
-            if (db.insertSach(in[0], in[1], Integer.parseInt(in[2]), in[3], url)) {
+            String noidung = edtNoiDung.getText().toString().trim();
+            if (db.insertSach(in[0], in[1], Integer.parseInt(in[2]), url, noidung)) {
                 Toast.makeText(this, "Thêm thành công!", Toast.LENGTH_SHORT).show();
                 resetForm();
             } else {
@@ -98,12 +89,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Sự kiện Bấm nút CẬP NHẬT sách
+        // Sự kiện Bấm nút CẬP NHẬT sách (Cập nhật cả nội dung sách)
         findViewById(R.id.btnupdate).setOnClickListener(v -> {
             String[] in = getInput();
             if (in == null) return;
             String url = edtAnhUrl.getText().toString().trim();
-            if (db.updateSach(in[0], in[1], Integer.parseInt(in[2]), in[3], url) > 0) {
+            String noidung = edtNoiDung.getText().toString().trim();
+            if (db.updateSach(in[0], in[1], Integer.parseInt(in[2]), url, noidung) > 0) {
                 Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
                 resetForm();
             } else {
@@ -146,22 +138,14 @@ public class MainActivity extends AppCompatActivity {
             menu.getMenu().add(0, 2, 1, "Giá tăng dần");
             menu.getMenu().add(0, 3, 2, "Giá giảm dần");
             menu.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == 1) orderBy = "s.tensach ASC";
-                else if (item.getItemId() == 2) orderBy = "s.gia ASC";
-                else orderBy = "s.gia DESC";
+                if (item.getItemId() == 1) orderBy = "tensach ASC";
+                else if (item.getItemId() == 2) orderBy = "gia ASC";
+                else orderBy = "gia DESC";
                 loadData();
                 return true;
             });
             menu.show();
         });
-
-        // Sự kiện Bấm nút THỐNG KÊ (hiện AlertDialog hiển thị thông tin thống kê)
-        findViewById(R.id.btnThongKe).setOnClickListener(v ->
-            new AlertDialog.Builder(this)
-                .setTitle("📊 Thống kê kho sách")
-                .setMessage(db.getThongKeText())
-                .setPositiveButton("Đóng", null).show()
-        );
 
         // Sự kiện Bấm nút ĐĂNG XUẤT (quay về LoginActivity)
         findViewById(R.id.btnLogout).setOnClickListener(v -> {
@@ -190,13 +174,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Giá tiền không hợp lệ!", Toast.LENGTH_SHORT).show();
             return null;
         }
-        String maloai = spnLoai.getSelectedItem().toString().split(" - ")[0];
-        return new String[]{ma, ten, gia, maloai};
+        return new String[]{ma, ten, gia};
     }
 
     // Hàm xóa trắng Form nhập liệu và tải lại danh sách
     private void resetForm() {
-        edtma.setText(""); edtten.setText(""); edtgia.setText(""); edtAnhUrl.setText("");
+        edtma.setText(""); edtten.setText(""); edtgia.setText(""); edtAnhUrl.setText(""); edtNoiDung.setText("");
         imgPreview.setImageResource(android.R.drawable.ic_menu_gallery);
         loadData();
     }

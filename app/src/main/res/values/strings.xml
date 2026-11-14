@@ -18,4 +18,5 @@
     <string name="chon_anh">Chọn ảnh</string>
     <string name="dan_link_url_hint">Dán link URL ảnh bìa (https://…)</string>
     <string name="tai_anh">Tải ảnh</string>
+    <string name="nhap_noi_dung_hint">Nội dung/Tóm tắt sách…</string>
 </resources>

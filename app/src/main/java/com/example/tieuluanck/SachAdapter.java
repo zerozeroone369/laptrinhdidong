@@ -40,16 +40,16 @@ public class SachAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup parent) {
         if (view == null) view = LayoutInflater.from(context).inflate(R.layout.item_sach, parent, false);
-        String[] s = list.get(i); // Cấu trúc mảng: {masach, tensach, gia, maloai, tenloai, anhUrl}
+        String[] s = list.get(i); // Cấu trúc mảng: {masach, tensach, gia, anhUrl, noidung}
 
         // Đổ thông tin text lên TextView
         ((TextView) view.findViewById(R.id.tvTen)).setText(s[1]);
-        ((TextView) view.findViewById(R.id.tvThongTin)).setText("Mã: " + s[0] + " | " + s[4]);
+        ((TextView) view.findViewById(R.id.tvThongTin)).setText("Mã: " + s[0]);
         ((TextView) view.findViewById(R.id.tvGia)).setText(String.format("%,d VNĐ", Integer.parseInt(s[2])));
 
         // Tải và hiển thị ảnh bìa từ URL
         ImageView img = view.findViewById(R.id.imgItemSach);
-        loadAnhTuUrl(s[5], img);
+        loadAnhTuUrl(s[3], img);
         return view;
     }
 

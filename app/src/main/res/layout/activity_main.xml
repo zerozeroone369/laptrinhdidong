@@ -27,16 +27,6 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/btnThongKe"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="@string/thong_ke"
-            android:textSize="12sp"
-            android:backgroundTint="#00695C"
-            android:textColor="@android:color/white"
-            android:layout_marginEnd="6dp"/>
-
-        <Button
             android:id="@+id/btnLogout"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
@@ -83,11 +73,23 @@
             android:inputType="textCapWords"
             android:importantForAutofill="no"/>
 
+        <EditText
+            android:id="@+id/edtNoiDung"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nhap_noi_dung_hint"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:maxLines="3"
+            android:textSize="13sp"
+            android:importantForAutofill="no"/>
+
         <!-- Ô nhập link URL ảnh + Ảnh xem trước + Nút tải thử -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:paddingBottom="4dp">
 
             <EditText
                 android:id="@+id/edtAnhUrl"
@@ -117,11 +119,6 @@
                 android:text="@string/tai_anh"
                 android:textSize="12sp"/>
         </LinearLayout>
-
-        <Spinner
-            android:id="@+id/spnLoai"
-            android:layout_width="match_parent"
-            android:layout_height="38dp" />
     </LinearLayout>
 
     <!-- 4 nút CRUD -->
