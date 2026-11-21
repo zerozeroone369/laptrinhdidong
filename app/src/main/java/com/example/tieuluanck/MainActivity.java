@@ -1,10 +1,13 @@
 package com.example.tieuluanck;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.DragEvent;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,7 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
- * Activity chính Quản Lý Sách dành cho Admin (Đầy đủ quyền CRUD, Dashboard thống kê, Nạp nội dung tự động từ File Word/TXT)
+ * Activity chính Quản Lý Sách dành cho Admin (Hỗ trợ Kéo - Thả / Nạp File sách tự động)
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -45,24 +48,7 @@ public class MainActivity extends AppCompatActivity {
         new ActivityResultContracts.GetContent(),
         uri -> {
             if (uri != null) {
-                try {
-                    InputStream is = getContentResolver().openInputStream(uri);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line).append("\n");
-                    }
-                    reader.close();
-                    if (sb.length() > 0) {
-                        edtNoiDung.setText(sb.toString().trim());
-                        Toast.makeText(this, "⚡ Đã tự động nạp nội dung từ File thành công!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "File rỗng hoặc không đọc được văn bản!", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(this, "Lỗi đọc nội dung file!", Toast.LENGTH_SHORT).show();
-                }
+                docFileVaNapNoiDung(uri);
             }
         }
     );
@@ -98,8 +84,34 @@ public class MainActivity extends AppCompatActivity {
                 .show()
         );
 
-        // Nút Nạp tự động nội dung từ File (.txt, Word, tài liệu)
-        findViewById(R.id.btnImportFile).setOnClickListener(v -> pickFileLauncher.launch("*/*"));
+        // [TÍNH NĂNG MỚI NỔI BẬT]: Khung Kéo - Thả / Bấm vào để nạp file sách tự động
+        View layoutDropzone = findViewById(R.id.layoutDropzone);
+        layoutDropzone.setOnClickListener(v -> pickFileLauncher.launch("*/*"));
+
+        // Xử lý sự kiện KÉO & THẢ (Drag & Drop) trực tiếp lên Khung Dropzone
+        layoutDropzone.setOnDragListener((v, event) -> {
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    return true;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    layoutDropzone.setAlpha(0.6f);
+                    return true;
+                case DragEvent.ACTION_DRAG_EXITED:
+                case DragEvent.ACTION_DRAG_ENDED:
+                    layoutDropzone.setAlpha(1.0f);
+                    return true;
+                case DragEvent.ACTION_DROP:
+                    ClipData clipData = event.getClipData();
+                    if (clipData != null && clipData.getItemCount() > 0) {
+                        Uri uri = clipData.getItemAt(0).getUri();
+                        if (uri != null) {
+                            docFileVaNapNoiDung(uri);
+                        }
+                    }
+                    return true;
+            }
+            return false;
+        });
 
         // Nút Bấm "Tải ảnh" từ link URL để xem trước
         findViewById(R.id.btnTaiAnh).setOnClickListener(v -> {
@@ -206,6 +218,28 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
             return insets;
         });
+    }
+
+    // Hàm trích xuất nội dung từ File và nạp vào Form
+    private void docFileVaNapNoiDung(Uri uri) {
+        try {
+            InputStream is = getContentResolver().openInputStream(uri);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            reader.close();
+            if (sb.length() > 0) {
+                edtNoiDung.setText(sb.toString().trim());
+                Toast.makeText(this, "🎉 Đã tự động trích xuất & nạp nội dung file thành công!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "File rỗng hoặc không thể đọc văn bản!", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Lỗi khi đọc file!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Hàm lấy và kiểm tra hợp lệ dữ liệu nhập từ Form

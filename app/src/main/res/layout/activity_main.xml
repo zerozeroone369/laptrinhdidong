@@ -83,34 +83,49 @@
             android:inputType="textCapWords"
             android:importantForAutofill="no"/>
 
-        <!-- Nhập nội dung sách + Nút Nạp tự động từ File Word/TXT/Ảnh -->
+        <!-- Khung Kéo - Thả / Nạp File Sách Tự Động -->
         <LinearLayout
+            android:id="@+id/layoutDropzone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_dropzone_border"
+            android:padding="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:clickable="true"
+            android:focusable="true">
 
-            <EditText
-                android:id="@+id/edtNoiDung"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/nhap_noi_dung_hint"
-                android:inputType="textMultiLine"
-                android:minLines="2"
-                android:maxLines="3"
-                android:textSize="13sp"
-                android:importantForAutofill="no"/>
-
-            <Button
-                android:id="@+id/btnImportFile"
+            <TextView
+                android:id="@+id/tvDropzoneTitle"
                 android:layout_width="wrap_content"
-                android:layout_height="38dp"
-                android:text="📂 Nạp File/Ảnh"
+                android:layout_height="wrap_content"
+                android:text="📥 KÉO - THẢ HOẶC BẤM VÀO ĐÂY ĐỂ NẠP FILE SÁCH"
+                android:textColor="#1B5E20"
                 android:textSize="11sp"
-                android:backgroundTint="#2E7D32"
-                android:textColor="@android:color/white"
-                android:layout_marginStart="4dp"/>
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tự động nạp nội dung file .TXT, Word, Tài liệu, Code..."
+                android:textColor="#388E3C"
+                android:textSize="10sp"
+                android:gravity="center" />
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/edtNoiDung"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nhap_noi_dung_hint"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:maxLines="3"
+            android:textSize="13sp"
+            android:importantForAutofill="no"/>
 
         <!-- Ô nhập link URL ảnh + Ảnh xem trước + Nút tải thử -->
         <LinearLayout
