@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
- * Lớp nâng cấp CSDL SQLite thực tế: Hỗ trợ Yêu thích, Đánh giá ⭐, Bình luận & Thống kê kho
+ * Lớp nâng cấp CSDL SQLite thực tế: Hỗ trợ Yêu thích, Đánh giá ⭐, Đa phương tiện đan xen Chữ & Ảnh trong nội dung sách
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
-        // Nâng cấp version 11 bổ sung các tính năng ứng dụng thực tế cao
-        super(context, "qlsach_gon.db", null, 11);
+        // Nâng cấp version 12 hỗ trợ Đa phương tiện (Chữ đan xen Ảnh) trong nội dung sách
+        super(context, "qlsach_gon.db", null, 12);
     }
 
     @Override
@@ -30,15 +30,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Tài khoản Admin mặc định
         db.execSQL("INSERT INTO tbluser VALUES ('admin', '123456', 'admin')");
 
-        // Dữ liệu sách mẫu thực tế
+        // Dữ liệu sách mẫu thực tế đan xen Chữ & Ảnh minh họa [img]URL[/img] trong nội dung
         db.execSQL("INSERT INTO tblsach VALUES " +
-                "('S01', 'Lập trình Android', 145000, 'https://covers.openlibrary.org/b/id/8259443-M.jpg', 'Sách hướng dẫn lập trình ứng dụng Android chuyên nghiệp với Java, SQLite và Jetpack Compose.'), " +
-                "('S02', 'Cấu trúc dữ liệu', 180000, 'https://covers.openlibrary.org/b/id/10521270-M.jpg', 'Tổng quan về mảng, danh sách liên kết, cây, đồ thị và các thuật toán sắp xếp, tìm kiếm tối ưu.'), " +
-                "('S03', 'Đắc Nhân Tâm', 86000, 'https://covers.openlibrary.org/b/id/12547191-M.jpg', 'Cuốn sách nghệ thuật thu phục lòng người, giao tiếp và ứng xử nghệ thuật hàng đầu thế giới của Dale Carnegie.')");
+                "('S01', 'Lập trình Android', 145000, 'https://covers.openlibrary.org/b/id/8259443-M.jpg', 'Sách hướng dẫn lập trình ứng dụng Android chuyên nghiệp với Java, SQLite và Jetpack Compose.\n\n[img]https://covers.openlibrary.org/b/id/8259443-M.jpg[/img]\n\nChương 1: Khởi tạo dự án Android Studio, thiết kế giao diện với XML Layouts và xử lý sự kiện tương tác.'), " +
+                "('S02', 'Cấu trúc dữ liệu', 180000, 'https://covers.openlibrary.org/b/id/10521270-M.jpg', 'Tổng quan về mảng, danh sách liên kết, cây, đồ thị và các thuật toán sắp xếp, tìm kiếm tối ưu trong khoa học máy tính.\n\n[img]https://covers.openlibrary.org/b/id/10521270-M.jpg[/img]\n\nChương 1: Các cấu trúc dữ liệu tuyến tính và ứng dụng trong tối ưu thuật toán.'), " +
+                "('S03', 'Đắc Nhân Tâm', 86000, 'https://covers.openlibrary.org/b/id/12547191-M.jpg', 'Cuốn sách nghệ thuật thu phục lòng người, giao tiếp và ứng xử nghệ thuật hàng đầu thế giới của Dale Carnegie.\n\n[img]https://covers.openlibrary.org/b/id/12547191-M.jpg[/img]\n\nChương 1: Nghệ thuật ứng xử căn bản và cách tạo thiện cảm ban đầu.')");
 
         // Dữ liệu mẫu đánh giá sao
         db.execSQL("INSERT INTO tblrating (masach, username, sao, binhluan) VALUES " +
-                "('S01', 'admin', 5.0, 'Sách viết rất hay và trực quan!'), " +
+                "('S01', 'admin', 5.0, 'Sách viết rất hay, có kèm hình ảnh minh họa đan xen rất dễ hiểu!'), " +
                 "('S01', 'khach01', 4.5, 'Nội dung thực tế, dễ học.'), " +
                 "('S03', 'khach02', 5.0, 'Cuốn sách gối đầu giường rất xuất sắc.')");
     }
@@ -91,7 +91,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getWritableDatabase().delete("tblsach", "masach=?", new String[]{ma});
     }
 
-    // --- TÍNH NĂNG MỚI 1: TỦ SÁCH YÊU THÍCH ---
     public boolean toggleFavorite(String username, String masach) {
         if (isFavorite(username, masach)) {
             getWritableDatabase().delete("tblfavorite", "username=? AND masach=?", new String[]{username, masach});
@@ -112,7 +111,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return fav;
     }
 
-    // --- TÍNH NĂNG MỚI 2: ĐÁNH GIÁ ⭐ VÀ BÌNH LUẬN ---
     public void addRating(String masach, String username, float sao, String binhluan) {
         ContentValues v = new ContentValues();
         v.put("masach", masach);
@@ -120,16 +118,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         v.put("sao", sao);
         v.put("binhluan", binhluan);
         getWritableDatabase().insert("tblrating", null, v);
-    }
-
-    public float getAverageRating(String masach) {
-        Cursor c = getReadableDatabase().rawQuery("SELECT AVG(sao) FROM tblrating WHERE masach=?", new String[]{masach});
-        float avg = 5.0f;
-        if (c.moveToFirst() && !c.isNull(0)) {
-            avg = c.getFloat(0);
-        }
-        c.close();
-        return avg;
     }
 
     public ArrayList<String> getRatingsTextList(String masach) {
@@ -151,17 +139,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 .toLowerCase();
     }
 
-    // Trả về mảng String[6]: {masach, tensach, gia, anh, noidung, diem_sao}
     public ArrayList<String[]> getDanhSachSach(String keyword, String orderBy, boolean onlyFavorite, String username) {
         ArrayList<String[]> list = new ArrayList<>();
         String sql = "SELECT s.masach, s.tensach, s.gia, s.anh, s.noidung, IFNULL(AVG(r.sao), 5.0) as avg_sao " +
                      "FROM tblsach s " +
                      "LEFT JOIN tblrating r ON s.masach = r.masach ";
-        
+
         if (onlyFavorite) {
             sql += "INNER JOIN tblfavorite f ON s.masach = f.masach AND f.username = '" + username + "' ";
         }
-        
+
         sql += "GROUP BY s.masach ";
         if (!orderBy.isEmpty()) sql += " ORDER BY " + orderBy;
 
@@ -185,12 +172,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    // Overload gọn cho Admin
     public ArrayList<String[]> getDanhSachSach(String keyword, String orderBy) {
         return getDanhSachSach(keyword, orderBy, false, "");
     }
 
-    // --- TÍNH NĂNG MỚI 3: THỐNG KÊ DASHBOARD THỰC TẾ FOR ADMIN ---
     public String getDashboardStatsText() {
         Cursor c = getReadableDatabase().rawQuery("SELECT COUNT(*), SUM(gia), AVG(gia) FROM tblsach", null);
         String kq = "📊 DASHBOARD KHO SÁCH\n\n";

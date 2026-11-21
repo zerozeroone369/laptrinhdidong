@@ -27,7 +27,7 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 
 /**
- * Activity dành cho Độc giả / Khách (Đọc sách tùy chỉnh giao diện, Tủ sách yêu thích, Đánh giá ⭐ & Chia sẻ)
+ * Activity dành cho Độc giả / Khách (Đọc sách Đa phương tiện đan xen Chữ & Ảnh, Tủ sách yêu thích, Đánh giá ⭐ & Chia sẻ)
  */
 public class GuestActivity extends AppCompatActivity {
 
@@ -40,6 +40,8 @@ public class GuestActivity extends AppCompatActivity {
     String orderBy = "";
     boolean showingOnlyFavorites = false;
     String currentUsername = "khach_demo"; // Tên tài khoản độc giả hiện tại
+    float currentTextSize = 15f; // Cỡ chữ đọc sách
+    int currentTextColor = Color.BLACK; // Màu chữ đọc sách
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class GuestActivity extends AppCompatActivity {
             loadData();
         });
 
-        // Click dòng sách -> Mở Giao diện Đọc sách & Đánh giá nâng cao
+        // Click dòng sách -> Mở Giao diện Đọc sách Đa phương tiện (Đan xen Chữ & Ảnh)
         lv.setOnItemClickListener((p, v, pos, id) -> {
             String[] s = mylist.get(pos); // {masach, tensach, gia, anhUrl, noidung, diem_sao}
             showDialogDocSachNangCao(s);
@@ -111,7 +113,7 @@ public class GuestActivity extends AppCompatActivity {
         });
     }
 
-    // Hiển thị Dialog Đọc sách Nâng cao (Tùy chỉnh cỡ chữ, Đổi màu nền, Yêu thích, Đánh giá ⭐ & Chia sẻ)
+    // Hiển thị Dialog Đọc sách Nâng cao Đa phương tiện (Chữ đan xen Ảnh, Cỡ chữ, Đổi nền, Yêu thích, Đánh giá ⭐ & Chia sẻ)
     private void showDialogDocSachNangCao(String[] s) {
         String masach = s[0];
         String tensach = s[1];
@@ -164,22 +166,50 @@ public class GuestActivity extends AppCompatActivity {
         actionLayout.addView(btnShare);
         mainContent.addView(actionLayout);
 
-        // Khung Nội dung đọc sách
-        TextView tvNoiDung = new TextView(this);
-        tvNoiDung.setPadding(30, 30, 30, 30);
-        tvNoiDung.setTextSize(15);
-        tvNoiDung.setTextColor(Color.BLACK);
-        tvNoiDung.setText("📖 NỘI DUNG SÁCH:\n\n" + noidung);
-        mainContent.addView(tvNoiDung);
+        // Tiêu đề khung Nội dung
+        TextView tvTitleNoiDung = new TextView(this);
+        tvTitleNoiDung.setText("\n📖 NỘI DUNG SÁCH (ĐA PHƯƠNG TIỆN):");
+        tvTitleNoiDung.setTypeface(null, Typeface.BOLD);
+        tvTitleNoiDung.setPadding(0, 10, 0, 10);
+        mainContent.addView(tvTitleNoiDung);
+
+        // Khung Nội dung đọc sách đa phương tiện đan xen Chữ & Ảnh
+        LinearLayout readingContainer = new LinearLayout(this);
+        readingContainer.setOrientation(LinearLayout.VERTICAL);
+        readingContainer.setPadding(20, 20, 20, 20);
+
+        renderMultiMediaContent(noidung, readingContainer, currentTextColor, currentTextSize);
+        mainContent.addView(readingContainer);
 
         // Tùy chỉnh Cỡ chữ
-        btnFontSub.setOnClickListener(v -> tvNoiDung.setTextSize(Math.max(12f, tvNoiDung.getTextSize() / getResources().getDisplayMetrics().density - 2)));
-        btnFontAdd.setOnClickListener(v -> tvNoiDung.setTextSize(Math.min(26f, tvNoiDung.getTextSize() / getResources().getDisplayMetrics().density + 2)));
+        btnFontSub.setOnClickListener(v -> {
+            currentTextSize = Math.max(12f, currentTextSize - 2);
+            renderMultiMediaContent(noidung, readingContainer, currentTextColor, currentTextSize);
+        });
+        btnFontAdd.setOnClickListener(v -> {
+            currentTextSize = Math.min(26f, currentTextSize + 2);
+            renderMultiMediaContent(noidung, readingContainer, currentTextColor, currentTextSize);
+        });
 
         // Tùy chỉnh Màu nền đọc sách
-        btnBgWhite.setOnClickListener(v -> { layout.setBackgroundColor(Color.WHITE); tvNoiDung.setTextColor(Color.BLACK); });
-        btnBgSepia.setOnClickListener(v -> { layout.setBackgroundColor(0xFFFFF8E1); tvNoiDung.setTextColor(0xFF3E2723); });
-        btnBgDark.setOnClickListener(v -> { layout.setBackgroundColor(0xFF212121); tvNoiDung.setTextColor(Color.WHITE); });
+        btnBgWhite.setOnClickListener(v -> {
+            layout.setBackgroundColor(Color.WHITE);
+            currentTextColor = Color.BLACK;
+            tvTitleNoiDung.setTextColor(Color.BLACK);
+            renderMultiMediaContent(noidung, readingContainer, currentTextColor, currentTextSize);
+        });
+        btnBgSepia.setOnClickListener(v -> {
+            layout.setBackgroundColor(0xFFFFF8E1);
+            currentTextColor = 0xFF3E2723;
+            tvTitleNoiDung.setTextColor(0xFF3E2723);
+            renderMultiMediaContent(noidung, readingContainer, currentTextColor, currentTextSize);
+        });
+        btnBgDark.setOnClickListener(v -> {
+            layout.setBackgroundColor(0xFF212121);
+            currentTextColor = Color.WHITE;
+            tvTitleNoiDung.setTextColor(Color.WHITE);
+            renderMultiMediaContent(noidung, readingContainer, currentTextColor, currentTextSize);
+        });
 
         // Nút Yêu thích
         btnFav.setOnClickListener(v -> {
@@ -194,7 +224,7 @@ public class GuestActivity extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_SUBJECT, "Sách hay: " + tensach);
-            intent.putExtra(Intent.EXTRA_TEXT, "📚 Đang đọc cuốn sách hay: \"" + tensach + "\"\nGiá: " + String.format("%,d VNĐ", Integer.parseInt(gia)) + "\n\nNội dung: " + noidung);
+            intent.putExtra(Intent.EXTRA_TEXT, "📚 Đang đọc cuốn sách hay: \"" + tensach + "\"\nGiá: " + String.format("%,d VNĐ", Integer.parseInt(gia)));
             startActivity(Intent.createChooser(intent, "Chia sẻ sách qua"));
         });
 
@@ -238,6 +268,56 @@ public class GuestActivity extends AppCompatActivity {
                 .setView(layout)
                 .setPositiveButton("Đóng", null)
                 .show();
+    }
+
+    // Hàm nạp đan xen Chữ & Ảnh minh họa trong Nội dung sách
+    private void renderMultiMediaContent(String noidung, LinearLayout container, int textColor, float textSize) {
+        container.removeAllViews();
+        if (noidung == null || noidung.trim().isEmpty()) {
+            TextView tvEmpty = new TextView(this);
+            tvEmpty.setText("(Chưa có nội dung chi tiết)");
+            tvEmpty.setPadding(30, 20, 30, 20);
+            tvEmpty.setTextColor(textColor);
+            container.addView(tvEmpty);
+            return;
+        }
+
+        String[] lines = noidung.split("\n");
+        for (String line : lines) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty()) continue;
+
+            // Kiểm tra thẻ ảnh minh họa [img]URL[/img] hoặc đường dẫn/Base64 ảnh
+            if (trimmed.startsWith("[img]") && trimmed.endsWith("[/img]")) {
+                String imgUrl = trimmed.substring(5, trimmed.length() - 6).trim();
+                ImageView imgView = new ImageView(this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 450);
+                lp.setMargins(0, 15, 0, 15);
+                imgView.setLayoutParams(lp);
+                imgView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                SachAdapter.loadAnhTuUrl(imgUrl, imgView);
+                container.addView(imgView);
+            } else if ((trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:image/"))
+                    && (trimmed.contains(".jpg") || trimmed.contains(".jpeg") || trimmed.contains(".png") || trimmed.contains(".webp") || trimmed.contains("base64"))) {
+                ImageView imgView = new ImageView(this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 450);
+                lp.setMargins(0, 15, 0, 15);
+                imgView.setLayoutParams(lp);
+                imgView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                SachAdapter.loadAnhTuUrl(trimmed, imgView);
+                container.addView(imgView);
+            } else {
+                // Văn bản thông thường
+                TextView tvText = new TextView(this);
+                tvText.setPadding(10, 6, 10, 6);
+                tvText.setTextSize(textSize);
+                tvText.setTextColor(textColor);
+                tvText.setText(trimmed);
+                container.addView(tvText);
+            }
+        }
     }
 
     private void loadData() {

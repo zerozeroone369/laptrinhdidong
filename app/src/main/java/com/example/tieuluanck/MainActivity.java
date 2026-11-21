@@ -34,7 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
- * Activity chính Quản Lý Sách dành cho Admin (Hỗ trợ Nhận dạng Thông Minh File Ảnh / File Văn Bản)
+ * Activity chính Quản Lý Sách dành cho Admin (Hỗ trợ Nhận dạng Thông Minh: Chèn Ảnh đan xen Chữ trong Nội dung sách)
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper db;
     String orderBy = "";
 
-    // Bộ chọn và nạp tự động nội dung sách từ File (.txt, .doc, ảnh, tài liệu)
+    // Bộ chọn và nạp tự động nội dung sách/ảnh từ File (.txt, .doc, ảnh, tài liệu)
     ActivityResultLauncher<String> pickFileLauncher = registerForActivityResult(
         new ActivityResultContracts.GetContent(),
         uri -> {
@@ -224,13 +224,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Hàm thông minh nhận dạng kiểu file: Nếu là Ảnh -> Nạp làm Bìa sách; Nếu là Văn bản -> Nạp vào Nội dung
+    // Hàm thông minh nhận dạng file: Nạp làm Bìa Sách ĐỒNG THỜI tự động chèn thẻ [img]Ảnh[/img] vào Nội dung sách
     private void docFileVaNapNoiDung(Uri uri) {
         try {
             String mimeType = getContentResolver().getType(uri);
             String path = uri.toString().toLowerCase();
 
-            // 1. Nhận dạng File Ảnh (.jpg, .png, .webp, .jfif, image/*) -> Tự động nạp làm Bìa Sách
+            // 1. Nhận dạng File Ảnh (.jpg, .png, .webp, .jfif, image/*) -> Nạp làm Bìa & Chèn thẻ [img]Ảnh[/img] vào Nội dung
             if ((mimeType != null && mimeType.startsWith("image/"))
                     || path.contains(".jpg") || path.contains(".jpeg")
                     || path.contains(".png") || path.contains(".webp") || path.contains(".jfif")) {
@@ -242,16 +242,25 @@ public class MainActivity extends AppCompatActivity {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
                     String base64Image = "data:image/jpeg;base64," + Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
 
-                    edtAnhUrl.setText(base64Image);
-                    SachAdapter.loadAnhTuUrl(base64Image, imgPreview);
-                    Toast.makeText(this, "📸 Đã tự động nhận dạng file ẢNH và nạp làm Bìa Sách thành công!", Toast.LENGTH_SHORT).show();
+                    // Cập nhật làm ảnh bìa
+                    if (edtAnhUrl.getText().toString().trim().isEmpty()) {
+                        edtAnhUrl.setText(base64Image);
+                        SachAdapter.loadAnhTuUrl(base64Image, imgPreview);
+                    }
+
+                    // Chèn thẻ [img]Ảnh[/img] đan xen vào ô Nội dung sách
+                    String currentText = edtNoiDung.getText().toString();
+                    String imgTag = "\n\n[img]" + base64Image + "[/img]\n\n";
+                    edtNoiDung.setText(currentText + imgTag);
+
+                    Toast.makeText(this, "📸 Đã tự động chèn Ảnh Minh Họa đan xen vào Nội Dung Sách!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "Không thể đọc file ảnh này!", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
 
-            // 2. Nhận dạng File Văn bản (.txt, tài liệu) -> Tự động nạp vào Nội dung Sách
+            // 2. Nhận dạng File Văn bản (.txt, tài liệu) -> Tự động chèn văn bản vào Nội dung Sách
             InputStream is = getContentResolver().openInputStream(uri);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
@@ -262,15 +271,10 @@ public class MainActivity extends AppCompatActivity {
             reader.close();
 
             String text = sb.toString().trim();
-            // Nếu phát hiện nhị phân ảnh JFIF/PNG trong văn bản
-            if (text.contains("JFIF") || text.contains("Exif") || text.contains("PNG")) {
-                Toast.makeText(this, "⚠️ File vừa chọn là File Ảnh! Hệ thống đã khuyên dùng file .TXT/Word cho Nội dung.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
             if (text.length() > 0) {
-                edtNoiDung.setText(text);
-                Toast.makeText(this, "⚡ Đã tự động trích xuất & nạp nội dung văn bản từ File thành công!", Toast.LENGTH_SHORT).show();
+                String currentText = edtNoiDung.getText().toString();
+                edtNoiDung.setText((currentText.isEmpty() ? "" : currentText + "\n\n") + text);
+                Toast.makeText(this, "⚡ Đã tự động nạp văn bản từ File vào Nội dung sách thành công!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "File rỗng hoặc không chứa văn bản!", Toast.LENGTH_SHORT).show();
             }
