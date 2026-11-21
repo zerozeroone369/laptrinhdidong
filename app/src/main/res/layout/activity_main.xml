@@ -83,16 +83,34 @@
             android:inputType="textCapWords"
             android:importantForAutofill="no"/>
 
-        <EditText
-            android:id="@+id/edtNoiDung"
+        <!-- Nhập nội dung sách + Nút Nạp tự động từ File Word/TXT/Ảnh -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/nhap_noi_dung_hint"
-            android:inputType="textMultiLine"
-            android:minLines="2"
-            android:maxLines="3"
-            android:textSize="13sp"
-            android:importantForAutofill="no"/>
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/edtNoiDung"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/nhap_noi_dung_hint"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:maxLines="3"
+                android:textSize="13sp"
+                android:importantForAutofill="no"/>
+
+            <Button
+                android:id="@+id/btnImportFile"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:text="📂 Nạp File/Ảnh"
+                android:textSize="11sp"
+                android:backgroundTint="#2E7D32"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="4dp"/>
+        </LinearLayout>
 
         <!-- Ô nhập link URL ảnh + Ảnh xem trước + Nút tải thử -->
         <LinearLayout

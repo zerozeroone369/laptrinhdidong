@@ -1,6 +1,7 @@
 package com.example.tieuluanck;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,15 +12,22 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
- * Activity chính Quản Lý Sách dành cho Admin (Đầy đủ quyền CRUD, Dashboard thống kê, Ghi nội dung sách)
+ * Activity chính Quản Lý Sách dành cho Admin (Đầy đủ quyền CRUD, Dashboard thống kê, Nạp nội dung tự động từ File Word/TXT)
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +39,33 @@ public class MainActivity extends AppCompatActivity {
     SachAdapter myadapter;
     DatabaseHelper db;
     String orderBy = "";
+
+    // Bộ chọn và nạp tự động nội dung sách từ File (.txt, .doc, tài liệu)
+    ActivityResultLauncher<String> pickFileLauncher = registerForActivityResult(
+        new ActivityResultContracts.GetContent(),
+        uri -> {
+            if (uri != null) {
+                try {
+                    InputStream is = getContentResolver().openInputStream(uri);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line).append("\n");
+                    }
+                    reader.close();
+                    if (sb.length() > 0) {
+                        edtNoiDung.setText(sb.toString().trim());
+                        Toast.makeText(this, "⚡ Đã tự động nạp nội dung từ File thành công!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "File rỗng hoặc không đọc được văn bản!", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(this, "Lỗi đọc nội dung file!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Đóng", null)
                 .show()
         );
+
+        // Nút Nạp tự động nội dung từ File (.txt, Word, tài liệu)
+        findViewById(R.id.btnImportFile).setOnClickListener(v -> pickFileLauncher.launch("*/*"));
 
         // Nút Bấm "Tải ảnh" từ link URL để xem trước
         findViewById(R.id.btnTaiAnh).setOnClickListener(v -> {
