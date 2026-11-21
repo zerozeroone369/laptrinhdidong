@@ -2,5 +2,60 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="header_background">#00AEEF</color>
+
+    <!-- Brand & Material 3 Light Palette -->
+    <color name="md_primary">#3949AB</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#E0E4FF</color>
+    <color name="md_on_primary_container">#0F1B66</color>
+
+    <color name="md_secondary">#D97706</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#FEF3C7</color>
+    <color name="md_on_secondary_container">#78350F</color>
+
+    <color name="md_surface_bg">#F6F7FB</color>
+    <color name="md_surface_card">#FFFFFF</color>
+    <color name="md_surface_variant">#ECEFF6</color>
+    <color name="md_text_primary">#161925</color>
+    <color name="md_text_secondary">#5B6275</color>
+    <color name="md_outline">#DCE1EE</color>
+
+    <!-- Dark Palette overrides -->
+    <color name="md_dark_primary">#9FA8DA</color>
+    <color name="md_dark_on_primary">#101B5E</color>
+    <color name="md_dark_primary_container">#253282</color>
+    <color name="md_dark_on_primary_container">#E0E4FF</color>
+    <color name="md_dark_secondary">#FBBF24</color>
+    <color name="md_dark_on_secondary">#3B2300</color>
+    <color name="md_dark_secondary_container">#4B3407</color>
+    <color name="md_dark_on_secondary_container">#FDE68A</color>
+    <color name="md_dark_surface_bg">#11131A</color>
+    <color name="md_dark_surface_card">#1A1E29</color>
+    <color name="md_dark_surface_variant">#252B3B</color>
+    <color name="md_dark_text_primary">#F0F2FA</color>
+    <color name="md_dark_text_secondary">#A3ACC2</color>
+    <color name="md_dark_outline">#2E3548</color>
+
+    <!-- Semantic -->
+    <color name="status_completed">#10B981</color>
+    <color name="status_ongoing">#F59E0B</color>
+    <color name="accent_rose">#E11D48</color>
+    <color name="header_background">#3949AB</color>
+
+    <!-- Reader Themes -->
+    <color name="reader_light_bg">#FFFFFF</color>
+    <color name="reader_light_text">#1E2028</color>
+    <color name="reader_light_bar">#F4F5F8</color>
+    <color name="reader_light_highlight">#E8ECFF</color>
+
+    <color name="reader_sepia_bg">#F5ECD7</color>
+    <color name="reader_sepia_text">#433422</color>
+    <color name="reader_sepia_bar">#EAE0C8</color>
+    <color name="reader_sepia_highlight">#E5D2AE</color>
+
+    <color name="reader_dark_bg">#121316</color>
+    <color name="reader_dark_text">#D7DAE2</color>
+    <color name="reader_dark_bar">#1B1E24</color>
+    <color name="reader_dark_highlight">#262E45</color>
 </resources>

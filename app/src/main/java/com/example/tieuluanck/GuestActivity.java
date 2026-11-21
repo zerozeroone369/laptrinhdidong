@@ -53,11 +53,11 @@ public class GuestActivity extends AppCompatActivity {
 
         // [SỰ KIỆN 1]: Khách chạm/bấm vào một dòng sách trong ListView -> Mở hộp thoại (Dialog) ĐỌC NỘI DUNG SÁCH
         lv.setOnItemClickListener((p, v, pos, id) -> {
-            String[] s = mylist.get(pos); // Lấy mảng thông tin sách: {masach, tensach, gia, maloai, tenloai, anhUrl, noidung}
+            String[] s = mylist.get(pos); // Lấy mảng thông tin sách: {masach, tensach, gia, anhUrl, noidung} (Độ dài 5)
             showDialogDocSach(s); // Hiển thị nội dung chi tiết
         });
 
-        // [SỰ KIỆN 2]: Lắng nghe sự kiện TÌM KIẾM realtime (gõ tới đâu lọc kết quả tới đó, hỗ trợ tiếng Việt có/không dấu)
+        // [SỰ KIỆN 2]: Lắng nghe sự kiện TÌM KIẾM realtime khi người dùng gõ từ khóa
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
             @Override public void onTextChanged(CharSequence s, int a, int b, int c) {
@@ -73,9 +73,9 @@ public class GuestActivity extends AppCompatActivity {
             menu.getMenu().add(0, 2, 1, "Giá tăng dần");
             menu.getMenu().add(0, 3, 2, "Giá giảm dần");
             menu.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == 1) orderBy = "s.tensach ASC";
-                else if (item.getItemId() == 2) orderBy = "s.gia ASC";
-                else orderBy = "s.gia DESC";
+                if (item.getItemId() == 1) orderBy = "tensach ASC";
+                else if (item.getItemId() == 2) orderBy = "gia ASC";
+                else orderBy = "gia DESC";
                 loadData(); // Tải lại danh sách đã sắp xếp
                 return true;
             });
@@ -101,19 +101,20 @@ public class GuestActivity extends AppCompatActivity {
         ScrollView layout = new ScrollView(this);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.item_sach, null);
 
-        // Gán thông tin đầu sách lên Header của Dialog (Tên sách, Mã, Thể loại, Giá, Ảnh bìa)
+        // Gán thông tin đầu sách lên Header của Dialog (Tên sách, Mã, Giá, Ảnh bìa)
+        // Cấu trúc s: {masach, tensach, gia, anhUrl, noidung}
         ((TextView) dialogView.findViewById(R.id.tvTen)).setText(s[1]);
-        ((TextView) dialogView.findViewById(R.id.tvThongTin)).setText("Mã: " + s[0] + " | Thể loại: " + s[4]);
+        ((TextView) dialogView.findViewById(R.id.tvThongTin)).setText("Mã: " + s[0]);
         ((TextView) dialogView.findViewById(R.id.tvGia)).setText(String.format("%,d VNĐ", Integer.parseInt(s[2])));
         ImageView img = dialogView.findViewById(R.id.imgItemSach);
-        SachAdapter.loadAnhTuUrl(s[5], img);
+        SachAdapter.loadAnhTuUrl(s[3], img);
 
         // Tạo TextView hiển thị nội dung chi tiết sách
         TextView tvNoiDung = new TextView(this);
         tvNoiDung.setPadding(40, 20, 40, 30);
         tvNoiDung.setTextSize(15);
         tvNoiDung.setTextColor(0xFF333333);
-        String nd = s[6] != null && !s[6].trim().isEmpty() ? s[6] : "(Sách này chưa có nội dung chi tiết)";
+        String nd = s[4] != null && !s[4].trim().isEmpty() ? s[4] : "(Sách này chưa có nội dung chi tiết)";
         tvNoiDung.setText("📖 NỘI DUNG SÁCH:\n\n" + nd);
 
         // Đưa Header sách và Nội dung vào một LinearLayout cuộn (ScrollView)

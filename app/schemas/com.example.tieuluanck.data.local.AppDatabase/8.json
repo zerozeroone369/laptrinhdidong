@@ -1,0 +1,1084 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 8,
+    "identityHash": "02113b153d71d792442315977533299b",
+    "entities": [
+      {
+        "tableName": "tbluser",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`username` TEXT NOT NULL, `password_hash` TEXT NOT NULL, `salt` TEXT NOT NULL, `role` TEXT NOT NULL, `display_name` TEXT NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`username`))",
+        "fields": [
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "passwordHash",
+            "columnName": "password_hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "salt",
+            "columnName": "salt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "display_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "username"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "sach",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`masach` TEXT NOT NULL, `tensach` TEXT NOT NULL, `tensach_khongdau` TEXT NOT NULL, `tacgia` TEXT NOT NULL, `tacgia_khongdau` TEXT NOT NULL, `theloai` TEXT NOT NULL, `mota` TEXT NOT NULL, `anh` TEXT NOT NULL, `gia` INTEGER NOT NULL, `trangthai` TEXT NOT NULL, `luotxem` INTEGER NOT NULL, `ngaycapnhat` INTEGER NOT NULL, PRIMARY KEY(`masach`))",
+        "fields": [
+          {
+            "fieldPath": "masach",
+            "columnName": "masach",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tensach",
+            "columnName": "tensach",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tensachKhongDau",
+            "columnName": "tensach_khongdau",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tacgia",
+            "columnName": "tacgia",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tacgiaKhongDau",
+            "columnName": "tacgia_khongdau",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "theloai",
+            "columnName": "theloai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mota",
+            "columnName": "mota",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anh",
+            "columnName": "anh",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gia",
+            "columnName": "gia",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trangthai",
+            "columnName": "trangthai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "luotxem",
+            "columnName": "luotxem",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngaycapnhat",
+            "columnName": "ngaycapnhat",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "masach"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_sach_theloai",
+            "unique": false,
+            "columnNames": [
+              "theloai"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sach_theloai` ON `${TABLE_NAME}` (`theloai`)"
+          },
+          {
+            "name": "index_sach_tensach_khongdau",
+            "unique": false,
+            "columnNames": [
+              "tensach_khongdau"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sach_tensach_khongdau` ON `${TABLE_NAME}` (`tensach_khongdau`)"
+          },
+          {
+            "name": "index_sach_ngaycapnhat",
+            "unique": false,
+            "columnNames": [
+              "ngaycapnhat"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sach_ngaycapnhat` ON `${TABLE_NAME}` (`ngaycapnhat`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "chuong",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `masach` TEXT NOT NULL, `sothutu` INTEGER NOT NULL, `tieude` TEXT NOT NULL, `noidung` TEXT NOT NULL, `ngaydang` INTEGER NOT NULL, `is_downloaded` INTEGER NOT NULL DEFAULT 0, `downloaded_at` INTEGER NOT NULL DEFAULT 0, FOREIGN KEY(`masach`) REFERENCES `sach`(`masach`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masach",
+            "columnName": "masach",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sothutu",
+            "columnName": "sothutu",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tieude",
+            "columnName": "tieude",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "noidung",
+            "columnName": "noidung",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngaydang",
+            "columnName": "ngaydang",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDownloaded",
+            "columnName": "is_downloaded",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "downloadedAt",
+            "columnName": "downloaded_at",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_chuong_masach_sothutu",
+            "unique": true,
+            "columnNames": [
+              "masach",
+              "sothutu"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_chuong_masach_sothutu` ON `${TABLE_NAME}` (`masach`, `sothutu`)"
+          },
+          {
+            "name": "index_chuong_masach",
+            "unique": false,
+            "columnNames": [
+              "masach"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_chuong_masach` ON `${TABLE_NAME}` (`masach`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "sach",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "masach"
+            ],
+            "referencedColumns": [
+              "masach"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "tiendo_doc",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`username` TEXT NOT NULL, `masach` TEXT NOT NULL, `chuong_id` INTEGER NOT NULL, `chuong_hientai` INTEGER NOT NULL, `tieude_chuong` TEXT NOT NULL, `vitri_cuon` INTEGER NOT NULL, `thoigian` INTEGER NOT NULL, PRIMARY KEY(`username`, `masach`), FOREIGN KEY(`masach`) REFERENCES `sach`(`masach`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masach",
+            "columnName": "masach",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chuongId",
+            "columnName": "chuong_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chuongHientai",
+            "columnName": "chuong_hientai",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tieudeChuong",
+            "columnName": "tieude_chuong",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "vitriCuon",
+            "columnName": "vitri_cuon",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thoigian",
+            "columnName": "thoigian",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "username",
+            "masach"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_tiendo_doc_masach",
+            "unique": false,
+            "columnNames": [
+              "masach"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tiendo_doc_masach` ON `${TABLE_NAME}` (`masach`)"
+          },
+          {
+            "name": "index_tiendo_doc_username_thoigian",
+            "unique": false,
+            "columnNames": [
+              "username",
+              "thoigian"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tiendo_doc_username_thoigian` ON `${TABLE_NAME}` (`username`, `thoigian`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "sach",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "masach"
+            ],
+            "referencedColumns": [
+              "masach"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "tusach",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`username` TEXT NOT NULL, `masach` TEXT NOT NULL, `ngaythem` INTEGER NOT NULL, PRIMARY KEY(`username`, `masach`), FOREIGN KEY(`masach`) REFERENCES `sach`(`masach`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masach",
+            "columnName": "masach",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngaythem",
+            "columnName": "ngaythem",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "username",
+            "masach"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_tusach_masach",
+            "unique": false,
+            "columnNames": [
+              "masach"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tusach_masach` ON `${TABLE_NAME}` (`masach`)"
+          },
+          {
+            "name": "index_tusach_username_ngaythem",
+            "unique": false,
+            "columnNames": [
+              "username",
+              "ngaythem"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tusach_username_ngaythem` ON `${TABLE_NAME}` (`username`, `ngaythem`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "sach",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "masach"
+            ],
+            "referencedColumns": [
+              "masach"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "binhluan",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `masach` TEXT NOT NULL, `chuong_id` INTEGER, `username` TEXT NOT NULL, `noidung` TEXT NOT NULL, `thoigian` INTEGER NOT NULL, `luotlike` INTEGER NOT NULL, FOREIGN KEY(`masach`) REFERENCES `sach`(`masach`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`chuong_id`) REFERENCES `chuong`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masach",
+            "columnName": "masach",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chuongId",
+            "columnName": "chuong_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "noidung",
+            "columnName": "noidung",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thoigian",
+            "columnName": "thoigian",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "luotlike",
+            "columnName": "luotlike",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_binhluan_masach",
+            "unique": false,
+            "columnNames": [
+              "masach"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_binhluan_masach` ON `${TABLE_NAME}` (`masach`)"
+          },
+          {
+            "name": "index_binhluan_chuong_id",
+            "unique": false,
+            "columnNames": [
+              "chuong_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_binhluan_chuong_id` ON `${TABLE_NAME}` (`chuong_id`)"
+          },
+          {
+            "name": "index_binhluan_username",
+            "unique": false,
+            "columnNames": [
+              "username"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_binhluan_username` ON `${TABLE_NAME}` (`username`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "sach",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "masach"
+            ],
+            "referencedColumns": [
+              "masach"
+            ]
+          },
+          {
+            "table": "chuong",
+            "onDelete": "SET NULL",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "chuong_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "danhgia",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`username` TEXT NOT NULL, `masach` TEXT NOT NULL, `sosao` REAL NOT NULL, `noidung` TEXT, `thoigian` INTEGER NOT NULL, PRIMARY KEY(`username`, `masach`), FOREIGN KEY(`masach`) REFERENCES `sach`(`masach`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masach",
+            "columnName": "masach",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sosao",
+            "columnName": "sosao",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "noidung",
+            "columnName": "noidung",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "thoigian",
+            "columnName": "thoigian",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "username",
+            "masach"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_danhgia_masach",
+            "unique": false,
+            "columnNames": [
+              "masach"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_danhgia_masach` ON `${TABLE_NAME}` (`masach`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "sach",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "masach"
+            ],
+            "referencedColumns": [
+              "masach"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "tag",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ten` TEXT NOT NULL, `slug` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ten",
+            "columnName": "ten",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "slug",
+            "columnName": "slug",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_tag_slug",
+            "unique": true,
+            "columnNames": [
+              "slug"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_tag_slug` ON `${TABLE_NAME}` (`slug`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "sach_tag",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`masach` TEXT NOT NULL, `tag_id` INTEGER NOT NULL, PRIMARY KEY(`masach`, `tag_id`), FOREIGN KEY(`masach`) REFERENCES `sach`(`masach`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`tag_id`) REFERENCES `tag`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "masach",
+            "columnName": "masach",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tag_id",
+            "columnName": "tag_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "masach",
+            "tag_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_sach_tag_masach",
+            "unique": false,
+            "columnNames": [
+              "masach"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sach_tag_masach` ON `${TABLE_NAME}` (`masach`)"
+          },
+          {
+            "name": "index_sach_tag_tag_id",
+            "unique": false,
+            "columnNames": [
+              "tag_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sach_tag_tag_id` ON `${TABLE_NAME}` (`tag_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "sach",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "masach"
+            ],
+            "referencedColumns": [
+              "masach"
+            ]
+          },
+          {
+            "table": "tag",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tag_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "thongbao",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `username` TEXT NOT NULL, `loai` TEXT NOT NULL, `tieude` TEXT NOT NULL, `noidung` TEXT NOT NULL, `da_doc` INTEGER NOT NULL, `thoigian` INTEGER NOT NULL, `payload_json` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "loai",
+            "columnName": "loai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tieude",
+            "columnName": "tieude",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "noidung",
+            "columnName": "noidung",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "daDoc",
+            "columnName": "da_doc",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thoigian",
+            "columnName": "thoigian",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payloadJson",
+            "columnName": "payload_json",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_thongbao_username",
+            "unique": false,
+            "columnNames": [
+              "username"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_thongbao_username` ON `${TABLE_NAME}` (`username`)"
+          },
+          {
+            "name": "index_thongbao_thoigian",
+            "unique": false,
+            "columnNames": [
+              "thoigian"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_thongbao_thoigian` ON `${TABLE_NAME}` (`thoigian`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "baocao_loi",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `username` TEXT NOT NULL, `masach` TEXT NOT NULL, `chuong_id` INTEGER, `loai` TEXT NOT NULL, `mo_ta` TEXT NOT NULL, `trangthai` TEXT NOT NULL, `thoigian` INTEGER NOT NULL, FOREIGN KEY(`masach`) REFERENCES `sach`(`masach`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`chuong_id`) REFERENCES `chuong`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "masach",
+            "columnName": "masach",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chuongId",
+            "columnName": "chuong_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "loai",
+            "columnName": "loai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "moTa",
+            "columnName": "mo_ta",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trangthai",
+            "columnName": "trangthai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thoigian",
+            "columnName": "thoigian",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_baocao_loi_masach",
+            "unique": false,
+            "columnNames": [
+              "masach"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_baocao_loi_masach` ON `${TABLE_NAME}` (`masach`)"
+          },
+          {
+            "name": "index_baocao_loi_chuong_id",
+            "unique": false,
+            "columnNames": [
+              "chuong_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_baocao_loi_chuong_id` ON `${TABLE_NAME}` (`chuong_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "sach",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "masach"
+            ],
+            "referencedColumns": [
+              "masach"
+            ]
+          },
+          {
+            "table": "chuong",
+            "onDelete": "SET NULL",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "chuong_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ghichu_hl",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `username` TEXT NOT NULL, `chuong_id` INTEGER NOT NULL, `paragraph_index` INTEGER NOT NULL, `snippet` TEXT NOT NULL, `mau` INTEGER NOT NULL, `ghi_chu` TEXT, `thoigian` INTEGER NOT NULL, FOREIGN KEY(`chuong_id`) REFERENCES `chuong`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chuongId",
+            "columnName": "chuong_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "paragraphIndex",
+            "columnName": "paragraph_index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "snippet",
+            "columnName": "snippet",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mau",
+            "columnName": "mau",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ghiChu",
+            "columnName": "ghi_chu",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "thoigian",
+            "columnName": "thoigian",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ghichu_hl_chuong_id",
+            "unique": false,
+            "columnNames": [
+              "chuong_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ghichu_hl_chuong_id` ON `${TABLE_NAME}` (`chuong_id`)"
+          },
+          {
+            "name": "index_ghichu_hl_username",
+            "unique": false,
+            "columnNames": [
+              "username"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ghichu_hl_username` ON `${TABLE_NAME}` (`username`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "chuong",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "chuong_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "streak_doc",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`username` TEXT NOT NULL, `streak_hientai` INTEGER NOT NULL, `streak_max` INTEGER NOT NULL, `ngay_cuoi_doc` INTEGER NOT NULL, `tong_phut` INTEGER NOT NULL, `is_night_owl` INTEGER NOT NULL, PRIMARY KEY(`username`))",
+        "fields": [
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "streakHientai",
+            "columnName": "streak_hientai",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "streakMax",
+            "columnName": "streak_max",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngayCuoiDoc",
+            "columnName": "ngay_cuoi_doc",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tongPhut",
+            "columnName": "tong_phut",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isNightOwl",
+            "columnName": "is_night_owl",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "username"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "lichsu_phut_doc",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`username` TEXT NOT NULL, `day_key` TEXT NOT NULL, `phut_doc` INTEGER NOT NULL, PRIMARY KEY(`username`, `day_key`))",
+        "fields": [
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dayKey",
+            "columnName": "day_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "phutDoc",
+            "columnName": "phut_doc",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "username",
+            "day_key"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_lichsu_phut_doc_username",
+            "unique": false,
+            "columnNames": [
+              "username"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_lichsu_phut_doc_username` ON `${TABLE_NAME}` (`username`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '02113b153d71d792442315977533299b')"
+    ]
+  }
+}

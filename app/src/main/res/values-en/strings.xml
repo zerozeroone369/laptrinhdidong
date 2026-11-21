@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Book Reader Library</string>
+    <string name="app_tagline">Chapter-based reading • Smart management</string>
+
+    <string name="login_title">Sign In</string>
+    <string name="login_subtitle">Continue your reading journey</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="display_name_hint">Display Name</string>
+    <string name="btn_login">Sign In</string>
+    <string name="btn_register_guest">Create Reader Account</string>
+    <string name="register_dialog_title">Register Reader Account</string>
+    <string name="btn_register">Register</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="setup_admin_banner_title">No Admin Account Yet</string>
+    <string name="setup_admin_banner_desc">Create your first Admin account (PBKDF2 hashed, no hardcoded password).</string>
+    <string name="btn_setup_admin">Setup Admin</string>
+    <string name="setup_admin_dialog_title">Create First Admin</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_bookshelf">Bookshelf</string>
+    <string name="nav_admin">Admin</string>
+    <string name="nav_profile">Profile</string>
+
+    <string name="search_books_hint">Search title, author, code…</string>
+    <string name="genre_all">All</string>
+    <string name="tab_following">Following</string>
+    <string name="tab_history">History</string>
+    <string name="tab_intro">Overview</string>
+    <string name="tab_toc">Chapters</string>
+    <string name="btn_logout">Sign Out</string>
+</resources>

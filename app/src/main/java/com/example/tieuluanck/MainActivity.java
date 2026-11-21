@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             edtSearch.setText(""); orderBy = ""; resetForm();
         });
 
-        // Lắng nghe sự kiện TÌM KIẾM realtime khi người dùng gõ từ khóa
+        // TÌM KIẾM realtime khi người dùng gõ từ khóa
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
             @Override public void onTextChanged(CharSequence s, int a, int b, int c) { loadData(); }
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
-        // Xử lý System Bars EdgeToEdge
+        // Xử lý System Bars EdgeToEdge(tràn viền)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);

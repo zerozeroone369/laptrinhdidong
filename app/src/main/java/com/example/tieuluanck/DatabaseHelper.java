@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
-        // Version 5: Bỏ bảng thể loại, rút gọn cấu trúc bảng sách
-        super(context, "qlsach_gon.db", null, 5);
+        // Đặt version lên 10 để tự động nâng cấp/làm mới CSDL nếu máy ảo chứa phiên bản cũ
+        super(context, "qlsach_gon.db", null, 10);
     }
 
     @Override
@@ -40,6 +40,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS tblsach");
         db.execSQL("DROP TABLE IF EXISTS tbluser");
         onCreate(db);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgrade(db, oldVersion, newVersion);
     }
 
     public String checkLoginRole(String u, String p) {
