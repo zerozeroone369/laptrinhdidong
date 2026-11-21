@@ -2,10 +2,13 @@ package com.example.tieuluanck;
 
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.DragEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -24,13 +27,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
- * Activity chính Quản Lý Sách dành cho Admin (Hỗ trợ Kéo - Thả / Nạp File sách tự động)
+ * Activity chính Quản Lý Sách dành cho Admin (Hỗ trợ Nhận dạng Thông Minh File Ảnh / File Văn Bản)
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper db;
     String orderBy = "";
 
-    // Bộ chọn và nạp tự động nội dung sách từ File (.txt, .doc, tài liệu)
+    // Bộ chọn và nạp tự động nội dung sách từ File (.txt, .doc, ảnh, tài liệu)
     ActivityResultLauncher<String> pickFileLauncher = registerForActivityResult(
         new ActivityResultContracts.GetContent(),
         uri -> {
@@ -84,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 .show()
         );
 
-        // [TÍNH NĂNG MỚI NỔI BẬT]: Khung Kéo - Thả / Bấm vào để nạp file sách tự động
+        // Khung Kéo - Thả / Bấm vào để nạp file sách tự động
         View layoutDropzone = findViewById(R.id.layoutDropzone);
         layoutDropzone.setOnClickListener(v -> pickFileLauncher.launch("*/*"));
 
@@ -183,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             edtSearch.setText(""); orderBy = ""; resetForm();
         });
 
-        // Lắng nghe sự kiện TÌM KIẾM realtime khi người dùng gõ từ khóa
+        // TÌM KIẾM realtime khi người dùng gõ từ khóa
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
             @Override public void onTextChanged(CharSequence s, int a, int b, int c) { loadData(); }
@@ -212,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
-        // Xử lý System Bars EdgeToEdge
+        // Xử lý System Bars EdgeToEdge(tràn viền)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
@@ -220,9 +224,34 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Hàm trích xuất nội dung từ File và nạp vào Form
+    // Hàm thông minh nhận dạng kiểu file: Nếu là Ảnh -> Nạp làm Bìa sách; Nếu là Văn bản -> Nạp vào Nội dung
     private void docFileVaNapNoiDung(Uri uri) {
         try {
+            String mimeType = getContentResolver().getType(uri);
+            String path = uri.toString().toLowerCase();
+
+            // 1. Nhận dạng File Ảnh (.jpg, .png, .webp, .jfif, image/*) -> Tự động nạp làm Bìa Sách
+            if ((mimeType != null && mimeType.startsWith("image/"))
+                    || path.contains(".jpg") || path.contains(".jpeg")
+                    || path.contains(".png") || path.contains(".webp") || path.contains(".jfif")) {
+
+                InputStream is = getContentResolver().openInputStream(uri);
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                if (bitmap != null) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+                    String base64Image = "data:image/jpeg;base64," + Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
+
+                    edtAnhUrl.setText(base64Image);
+                    SachAdapter.loadAnhTuUrl(base64Image, imgPreview);
+                    Toast.makeText(this, "📸 Đã tự động nhận dạng file ẢNH và nạp làm Bìa Sách thành công!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Không thể đọc file ảnh này!", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // 2. Nhận dạng File Văn bản (.txt, tài liệu) -> Tự động nạp vào Nội dung Sách
             InputStream is = getContentResolver().openInputStream(uri);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
@@ -231,14 +260,22 @@ public class MainActivity extends AppCompatActivity {
                 sb.append(line).append("\n");
             }
             reader.close();
-            if (sb.length() > 0) {
-                edtNoiDung.setText(sb.toString().trim());
-                Toast.makeText(this, "🎉 Đã tự động trích xuất & nạp nội dung file thành công!", Toast.LENGTH_SHORT).show();
+
+            String text = sb.toString().trim();
+            // Nếu phát hiện nhị phân ảnh JFIF/PNG trong văn bản
+            if (text.contains("JFIF") || text.contains("Exif") || text.contains("PNG")) {
+                Toast.makeText(this, "⚠️ File vừa chọn là File Ảnh! Hệ thống đã khuyên dùng file .TXT/Word cho Nội dung.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if (text.length() > 0) {
+                edtNoiDung.setText(text);
+                Toast.makeText(this, "⚡ Đã tự động trích xuất & nạp nội dung văn bản từ File thành công!", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "File rỗng hoặc không thể đọc văn bản!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "File rỗng hoặc không chứa văn bản!", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Lỗi khi đọc file!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Lỗi khi xử lý file!", Toast.LENGTH_SHORT).show();
         }
     }
 
