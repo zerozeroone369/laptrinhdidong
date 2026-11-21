@@ -19,12 +19,11 @@ import java.util.HashMap;
 import java.util.concurrent.Executors;
 
 /**
- * Custom Adapter để hiển thị thông tin từng dòng sách lên ListView
+ * Custom Adapter để hiển thị thông tin từng dòng sách lên ListView (Kèm điểm ⭐ đánh giá)
  */
 public class SachAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<String[]> list;
-    // Bộ nhớ đệm RAM lưu ảnh đã tải để tránh phải tải lại nhiều lần
     private static final HashMap<String, Bitmap> cacheAnh = new HashMap<>();
 
     public SachAdapter(Context context, ArrayList<String[]> list) {
@@ -36,15 +35,16 @@ public class SachAdapter extends BaseAdapter {
     @Override public Object getItem(int i) { return list.get(i); }
     @Override public long getItemId(int i) { return i; }
 
-    // Tạo view hiển thị từng item dòng sách trong ListView
     @Override
     public View getView(int i, View view, ViewGroup parent) {
         if (view == null) view = LayoutInflater.from(context).inflate(R.layout.item_sach, parent, false);
-        String[] s = list.get(i); // Cấu trúc mảng: {masach, tensach, gia, anhUrl, noidung}
+        String[] s = list.get(i); // {masach, tensach, gia, anhUrl, noidung, diem_sao}
 
         // Đổ thông tin text lên TextView
         ((TextView) view.findViewById(R.id.tvTen)).setText(s[1]);
-        ((TextView) view.findViewById(R.id.tvThongTin)).setText("Mã: " + s[0]);
+        
+        String saoText = s.length >= 6 ? " | ⭐ " + s[5] : "";
+        ((TextView) view.findViewById(R.id.tvThongTin)).setText("Mã: " + s[0] + saoText);
         ((TextView) view.findViewById(R.id.tvGia)).setText(String.format("%,d VNĐ", Integer.parseInt(s[2])));
 
         // Tải và hiển thị ảnh bìa từ URL
@@ -53,28 +53,23 @@ public class SachAdapter extends BaseAdapter {
         return view;
     }
 
-    // Hàm dùng chung tải ảnh từ đường link URL bất đồng bộ (chạy luồng phụ & có cache)
     public static void loadAnhTuUrl(String url, ImageView img) {
         img.setTag(url);
-        // Kiểm tra URL rỗng
         if (url == null || url.trim().isEmpty()) {
             img.setImageResource(android.R.drawable.ic_menu_gallery);
             return;
         }
-        // Nếu ảnh đã có trong Cache RAM thì dùng ngay
         if (cacheAnh.containsKey(url)) {
             img.setImageBitmap(cacheAnh.get(url));
             return;
         }
         img.setImageResource(android.R.drawable.ic_menu_gallery);
-        // Mở luồng phụ để tải ảnh từ Internet không gây khựng giao diện UI
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
                 InputStream is = new URL(url).openStream();
                 Bitmap bmp = BitmapFactory.decodeStream(is);
                 if (bmp != null) {
                     cacheAnh.put(url, bmp);
-                    // Cập nhật lại giao diện trên Luồng chính (Main Thread)
                     new Handler(Looper.getMainLooper()).post(() -> {
                         if (url.equals(img.getTag())) img.setImageBitmap(bmp);
                     });

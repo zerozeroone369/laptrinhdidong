@@ -19,7 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 
 /**
- * Activity chính Quản Lý Sách dành cho Admin (Đầy đủ quyền CRUD, Ghi nội dung sách, Sắp xếp - Không dùng Thể loại)
+ * Activity chính Quản Lý Sách dành cho Admin (Đầy đủ quyền CRUD, Dashboard thống kê, Ghi nội dung sách)
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -54,6 +54,15 @@ public class MainActivity extends AppCompatActivity {
         lv.setAdapter(myadapter);
         loadData();
 
+        // Nút Thống kê Dashboard Kho Sách cho Admin
+        findViewById(R.id.btnDashboard).setOnClickListener(v ->
+            new AlertDialog.Builder(this)
+                .setTitle("📊 BÁO CÁO KHO SÁCH ADMIN")
+                .setMessage(db.getDashboardStatsText())
+                .setPositiveButton("Đóng", null)
+                .show()
+        );
+
         // Nút Bấm "Tải ảnh" từ link URL để xem trước
         findViewById(R.id.btnTaiAnh).setOnClickListener(v -> {
             String url = edtAnhUrl.getText().toString().trim();
@@ -66,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Sự kiện Click chọn 1 dòng sách trong ListView -> Điền thông tin lên Form (kèm link URL, ảnh & nội dung sách)
         lv.setOnItemClickListener((p, v, pos, id) -> {
-            String[] s = mylist.get(pos); // {masach, tensach, gia, anhUrl, noidung}
+            String[] s = mylist.get(pos); // {masach, tensach, gia, anhUrl, noidung, diem_sao}
             edtma.setText(s[0]);
             edtten.setText(s[1]);
             edtgia.setText(s[2]);
@@ -124,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             edtSearch.setText(""); orderBy = ""; resetForm();
         });
 
-        // TÌM KIẾM realtime khi người dùng gõ từ khóa
+        // Lắng nghe sự kiện TÌM KIẾM realtime khi người dùng gõ từ khóa
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
             @Override public void onTextChanged(CharSequence s, int a, int b, int c) { loadData(); }
@@ -153,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
-        // Xử lý System Bars EdgeToEdge(tràn viền)
+        // Xử lý System Bars EdgeToEdge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
